@@ -1,36 +1,42 @@
 import React, {useState } from 'react';
-import { Quiz } from '../App/styles';
+import { Quiz, Button } from '../App/styles';
 import Answers from '../Answers';
 export default function QnadA(props){
     const [index,setIndex] = useState(0);
-    const {q,a,correct} = props.Questions[index]
+    const [QandAState,setQandAState] = useState({
+       "qindex":0,
+       "answerIndex":-1,
+       "submitted":false
+    })
+    const {q,a,correct} = props.Questions[QandAState.qindex]
     const changeQuestion = function(id){
+        let currentState = {...QandAState}
         if(id==='next'){
-        setIndex(index+1);
+            currentState.qindex++;
         } else {
-            setIndex(index-1);
+            currentState.qindex--;
         }
+        setQandAState(currentState);
     }   
-    const [answerIndex,setAnswerIndex] = useState(-1);
-    const [status,setStatus] = useState('');
+
     const changeHandler = function(event){
-        setAnswerIndex(event.target.value);
+        let currentState = {...QandAState}
+        currentState.answerIndex = event.target.value
+        setQandAState(event.target.value);
     }
     const checkAnswer = function(event){
-        console.log(typeof(answerIndex)+"======="+typeof(correct));
-        const answerStatus = (answerIndex === correct)?'correctAnswer':'wrongAnswer';
-        console.log('answerStatus',answerStatus);
-        setStatus(answerStatus);
+        console.log(event.target.value);
+        //const answerStatus = (answerIndex === correct)?'correctAnswer':'wrongAnswer';
+        //setStatus(answerStatus);
     }
-    const Next = (index<(props.Questions.length-1))?<button onClick={() => changeQuestion('next')}>Next</button>:'';
-    const Prev = (index!==0)?<button onClick={() => changeQuestion('prev')}>Prev</button>:'';
+    const Next = <Button disabled={(QandAState.submitted === false || QandAState.qindex===props.Questions.length-1)?true:false} onClick={() => changeQuestion('next')}>Next</Button>;
+    const Prev = <Button disabled={(QandAState.submitted === false || QandAState.qindex===0)?true:false} onClick={() => changeQuestion('prev')}>Prev</Button>;
     return(
         <><Quiz>{q}</Quiz>
         <Answers changeHandler={changeHandler} answers={a} questionid={index}/>
-        <button onClick={checkAnswer}>Check</button>
+        <Button onClick={checkAnswer}>Submit</Button>
         {Prev}
-        {Next}
-        <div>{'Status = '+status}</div></>
+        {Next}</>
         
     )
 }

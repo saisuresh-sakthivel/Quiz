@@ -18,3 +18,8 @@ width:100%;
 font-style:italics;
 font-size:19px;
 `;
+export const Button = Styled.button`
+    width: 95px;
+    text-align: center;
+    margin-left: 10px;
+`
